@@ -8,7 +8,6 @@ NOTEON  = 1;
 NOTEOFF = 2;
 TIMESIGNATURE = 3;
 
-fclose(file); #necessary if previous run didn't finish
 f = fopen(file);
 n = 1;
 

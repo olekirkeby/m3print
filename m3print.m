@@ -74,10 +74,10 @@ axis('tics','off');
 # barlines
 for n = timestart:4 * (timesignature_num / timesignature_denom):timeend
     plot([n,n],[y0,y1],'-k');
-    text(n,y0-1,num2str(round(n/4 + 1),'%i'));
+    text(n,y0-1,num2str(round(n / timesignature_num + 1),'%i'));
 endfor
 # gridlines
-for n = timestart:(timesignature_num / timesignature_denom):timeend
+for n = timestart:timeend
     #FIXME: don't overwrites barlines
     plot([n,n],[y0,y1],':k');
 endfor

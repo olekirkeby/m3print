@@ -5,7 +5,7 @@ The title m3print is a short name for the combination of the two terms Major Thi
 
 The system uses Octave (an open-source Matlab clone). In order to try it, start Octave from the directory you have cloned this repository into, then enter the two commands  
 
-x = importcsv('birdland.csv'); m3print(x, start_time, end_time);
+x = importcsv('west_coast_blues.csv'); m3print(x, start_time, end_time);
 
 where start_time and end_time are in quaternotes. For converting from midi to csv you can use the excellent tool midicsv (http://www.fourmilab.ch/webtools/midicsv/).
 
