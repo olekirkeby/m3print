@@ -1,13 +1,13 @@
 # m3print
 Music notation using Octave
 
-The title m3print is a short name for the combination of the two terms Major Thirds and Piano Roll Inspired NoTation. It is an alternative to traditional music notation, and it is essentially an extension of the piano roll notation that is commonly used for MIDI editing in music recording software products.  
+The title m3print is a short name for the combination of the two terms Major Thirds and Piano Roll Inspired NoTation. It is an alternative to traditional music notation, and it is essentially an extension of the piano roll notation that is commonly used for MIDI editing in music recording software products.
 
-The system uses Octave (an open-source Matlab clone). In order to try it, start Octave from the directory you have cloned this repository into, then enter the two commands  
+The system uses Octave (an open-source Matlab clone). In order to try it, start Octave from the directory you have cloned this repository into, then enter the two commands
 
-x = importcsv('west_coast_blues.csv'); m3print(x, start_time, end_time);
+x = importcsv('sos.csv'); m3print(x, start_time, end_time);
 
-where start_time and end_time are in quaternotes. For converting from midi to csv you can use the excellent tool midicsv (http://www.fourmilab.ch/webtools/midicsv/).
+where start_time and end_time are in quaternotes. For converting from midi to csv you can use the excellent tool midicsv (http://www.fourmilab.ch/webtools/midicsv/). On Linux you can just do 'sudo apt-get install midicsv'.
 
 The notation is interpreted as follows.
 
@@ -19,3 +19,4 @@ The notation is interpreted as follows.
 - a green triangle pointing downwards indicates one of the notes A, Db, and F (1, 5, and 9 in clock notation)
 - a red triangle pointing upwards indicates one of the notes B, Eb, and G (3, 7, and 11 in clock notation)
 
+The graphics file SOS_ABBA.png shows an example of the output produced by m3print.

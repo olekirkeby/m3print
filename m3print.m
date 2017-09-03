@@ -1,6 +1,13 @@
-function m3print(x, timestart, timeend)
+function m3print(x, timestart, plotstart, plotend)
+
+# x - matrix created by importcsv.matrix
+# timestart - the time of the first beat of the first bar in quaternotes
+# plotstart - the time of the beginning of the plot in quaternotes
+# plotend   - the time of the end of the plot in quaternotes
 
 x = double(x);
+plotstart = plotstart + timestart;
+plotend   = plotend   + timestart;
 
 HEADER  = 0;
 NOTEON  = 1;
@@ -16,14 +23,36 @@ MARKERSIZE   = 10;
 n = find(x(3,:) == HEADER); #only one hit
 TICKSPERQUARTERNOTE = x(2,n);
 
-n = find(x(3,:) == TIMESIGNATURE); #FIXME: does not work for changing timesigs
-timesignature_num   = x(4,n);
-timesignature_denom = x(5,n);
-
 x(2,:) = x(2,:) / TICKSPERQUARTERNOTE; #convert times from ticks to quaternotes
 
-noteon  = find(x(3,:) == NOTEON  & x(2,:) >= timestart & x(2,:) <= timeend);
-noteoff = find(x(3,:) == NOTEOFF & x(2,:) >= timestart & x(2,:) <= timeend);
+#calculate barlines
+ntimesig = find(x(3,:) == TIMESIGNATURE);
+for nn = 1:length(ntimesig)
+    timesignature_time(nn)  = x(2,ntimesig(nn));
+    timesignature_num(nn)   = x(4,ntimesig(nn));
+    timesignature_denom(nn) = x(5,ntimesig(nn));
+endfor
+
+if (length(ntimesig) == 0)
+    printf('No time signature in csv file!');
+    exit (1);
+endif
+
+if (length(ntimesig) == 1)
+    barlines = timestart:4 * (timesignature_num(1) / timesignature_denom(1)):plotend;
+else
+    barlines = [timestart:4 * (timesignature_num(1) / timesignature_denom(1)):timesignature_time(2)];
+    for nn = 3:length(ntimesig)
+        barlines = [barlines timesignature_time(nn-1):4 * (timesignature_num(nn-1) / timesignature_denom(nn-1)):timesignature_time(nn)];
+    endfor
+    barlines     = [barlines timesignature_time(nn)  :4 * (timesignature_num(nn)   / timesignature_denom(nn))  :plotend];
+endif
+
+barlines = unique(barlines);
+barlines = barlines(find(barlines >= plotstart & barlines <= plotend));
+
+noteon  = find(x(3,:) == NOTEON  & x(2,:) >= plotstart & x(2,:) <= plotend);
+noteoff = find(x(3,:) == NOTEOFF & x(2,:) >= plotstart & x(2,:) <= plotend);
 
 # *********************** PLOTTING **********************************
 n0 = noteon(find(mod(x(5,noteon),4) == 0));
@@ -67,29 +96,32 @@ for n = 1:length(noteonoff)
     endif
 endfor
 
-axis([timestart timeend y0 y1]);
+axis([plotstart plotend y0 y1]);
 axis('tics','off');
 
 # Vertical lines
 # barlines
-for n = timestart:4 * (timesignature_num / timesignature_denom):timeend
-    plot([n,n],[y0,y1],'-k');
-    text(n,y0-1,num2str(round(n / timesignature_num + 1),'%i'));
+for n = 1:length(barlines)
+    plot([barlines(n),barlines(n)],[y0,y1],'-k');
+    text(barlines(n),y0-1,num2str(barlines(n),'%i'));
 endfor
+
 # gridlines
-for n = timestart:timeend
-    #FIXME: don't overwrites barlines
+for n = plotstart:plotend
+    #FIXME: don't overwrite barlines
     plot([n,n],[y0,y1],':k');
 endfor
 
 # Horizontal lines, notes E
 for n = MINSTAFFLINE:12:MAXSTAFFLINE
-    plot([timestart,timeend],[n,n],'-k');
-    text(timestart - 0.025 * (timeend - timestart),n,num2str(n,'%i'));
+    plot([plotstart,plotend],[n,n],'-k');
+    #FIXME: magic number text offset
+    text(plotstart - 0.025 * (plotend - plotstart),n,num2str(n,'%i'));
 endfor
+
 for n = MINSTAFFLINE:4:MAXSTAFFLINE
     #FIXME: don't overwrites stafflines
-    plot([timestart,timeend],[n,n],':k');
+    plot([plotstart,plotend],[n,n],':k');
 endfor
 
 hold off;
